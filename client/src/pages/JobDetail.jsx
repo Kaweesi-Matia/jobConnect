@@ -33,6 +33,8 @@ export default function JobDetail() {
 
   if (!job) return <div className="loading">Loading role…</div>;
 
+  const isClosed = job.status === 'closed';
+
   const pickFile = e => {
     const f = e.target.files[0];
     if (!f) return;
@@ -86,6 +88,7 @@ export default function JobDetail() {
                 <span><MapPin size={13} />{job.location}</span>
                 <span><Briefcase size={13} />{job.type}</span>
                 <span><Clock size={13} />{job.experience}</span>
+                {isClosed && <span className="status-toggle status-closed">Closed</span>}
               </div>
             </div>
           </div>
@@ -98,7 +101,13 @@ export default function JobDetail() {
         </article>
 
         <aside className="apply-card">
-          {user?.role === 'candidate' ? (
+          {isClosed && !alreadyApplied ? (
+            <>
+              <h3>Applications closed</h3>
+              <p>This role is no longer accepting applications. Check back later or browse other open roles.</p>
+              <Link className="btn full ghost" to="/jobs">Browse open roles</Link>
+            </>
+          ) : user?.role === 'candidate' ? (
             alreadyApplied ? (
               <>
                 <h3>Application submitted</h3>

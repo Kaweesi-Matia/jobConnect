@@ -3,9 +3,12 @@ import { Link } from 'react-router-dom';
 
 export default function JobCard({ job, user, applied }) {
   const isCandidate = user?.role === 'candidate';
+  const isClosed = job.status === 'closed';
 
   let cta;
-  if (!user) {
+  if (isClosed) {
+    cta = <span className="app-status status-closed">Closed</span>;
+  } else if (!user) {
     cta = <Link className="btn small" to="/login">Sign in to apply</Link>;
   } else if (!isCandidate) {
     // Recruiters browsing jobs don't apply
@@ -17,7 +20,7 @@ export default function JobCard({ job, user, applied }) {
   }
 
   return (
-    <article className="job-card">
+    <article className={`job-card${isClosed ? ' job-card-closed' : ''}`}>
       <div className="company-logo">{job.company?.[0]}</div>
       <div className="job-main">
         <div className="job-top">
@@ -31,6 +34,7 @@ export default function JobCard({ job, user, applied }) {
           <span>{job.type}</span>
           <span><MapPin size={13} />{job.location}</span>
           {job.experience && <span>{job.experience}</span>}
+          {isClosed && <span className="status-toggle status-closed">Closed</span>}
         </div>
         <p className="salary">{job.salaryMin || job.salaryMax ? `$${job.salaryMin || 0}k – $${job.salaryMax || 0}k` : 'Competitive salary'}</p>
         <div className="card-footer">

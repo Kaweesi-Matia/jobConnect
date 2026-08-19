@@ -15,9 +15,7 @@ export const listJobs = async (req, res) => {
       limit = 12
     } = req.query;
 
-    const filter = {
-      status: 'open'
-    };
+    const filter = {};
 
     // Search by title, company, description or location
     if (q && q.trim()) {
@@ -67,19 +65,23 @@ export const listJobs = async (req, res) => {
       filter.experience = experience.trim();
     }
 
-    // Sorting
+    // Sorting — open roles are shown before closed ones,
+    // since 'open' > 'closed' alphabetically, status: -1 puts open first.
     let sortObj = {
+      status: -1,
       createdAt: -1
     };
 
     if (sort === 'oldest') {
       sortObj = {
+        status: -1,
         createdAt: 1
       };
     }
 
     if (sort === 'salary') {
       sortObj = {
+        status: -1,
         salaryMax: -1
       };
     }

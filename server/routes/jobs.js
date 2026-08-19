@@ -21,19 +21,20 @@ const router = Router();
 // Find/search jobs
 router.get('/', listJobs);
 
-// Get a single job
-router.get('/:id', getJob);
-
-
 // Recruiter routes
 
 // Recruiter's jobs
+// NOTE: must be declared before '/:id' below, otherwise Express matches
+// GET /jobs/mine to the '/:id' route with id="mine" and throws a CastError.
 router.get(
   '/mine',
   protect,
   allow('recruiter'),
   myJobs
 );
+
+// Get a single job
+router.get('/:id', getJob);
 
 // Create job
 router.post(

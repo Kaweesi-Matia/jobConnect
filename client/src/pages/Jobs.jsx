@@ -140,7 +140,7 @@ export default function Jobs() {
 
       <div className="results-head">
         <b>
-          {jobs.length} open position{jobs.length !== 1 ? 's' : ''}
+          {jobs.length} position{jobs.length !== 1 ? 's' : ''}
         </b>
 
         <span>
