@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react';
 import { Search, SlidersHorizontal } from 'lucide-react';
 import api from '../lib/api.js';
 import JobCard from '../components/JobCard.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
 
 export default function Jobs() {
+  const { user } = useAuth();
   const [jobs, setJobs] = useState([]);
   const [q, setQ] = useState('');
   const [type, setType] = useState('');
@@ -11,6 +13,7 @@ export default function Jobs() {
   const [experience, setExperience] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [appliedIds, setAppliedIds] = useState(new Set());
 
   const loadJobs = async () => {
     try {
@@ -57,6 +60,17 @@ export default function Jobs() {
   useEffect(() => {
     loadJobs();
   }, [type, experience]);
+
+  // Know which jobs this candidate already applied to, so cards can show "Applied"
+  useEffect(() => {
+    if (user?.role !== 'candidate') {
+      setAppliedIds(new Set());
+      return;
+    }
+    api.get('/applications/mine')
+      .then(r => setAppliedIds(new Set(r.data.map(a => a.job?._id))))
+      .catch(() => {});
+  }, [user]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -187,6 +201,8 @@ export default function Jobs() {
             <JobCard
               key={job._id}
               job={job}
+              user={user}
+              applied={appliedIds.has(job._id)}
             />
           ))}
         </div>
