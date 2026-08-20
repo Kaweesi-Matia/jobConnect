@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Users, Briefcase, Clock3, ArrowUpRight } from 'lucide-react';
+import { Plus, Users, Briefcase, Clock3, ArrowUpRight, Trash2 } from 'lucide-react';
 import api from '../lib/api.js';
 
 export default function Dashboard() {
   const [jobs, setJobs] = useState([]);
   const [updatingId, setUpdatingId] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
 
   useEffect(() => {
     api.get('/jobs/mine').then(r => setJobs(r.data.jobs));
@@ -21,6 +22,23 @@ export default function Dashboard() {
       console.error('Failed to update job status', err);
     } finally {
       setUpdatingId(null);
+    }
+  };
+
+  const deleteJob = async (job) => {
+    const ok = window.confirm(
+      `Delete "${job.title}"? This will also remove any applications submitted for it. This can't be undone.`
+    );
+    if (!ok) return;
+    setDeletingId(job._id);
+    try {
+      await api.delete(`/jobs/${job._id}`);
+      setJobs(prev => prev.filter(j => j._id !== job._id));
+    } catch (err) {
+      console.error('Failed to delete job', err);
+      alert('Could not delete this job. Please try again.');
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -82,6 +100,16 @@ export default function Dashboard() {
 
                 <span>{j.applicants || 0} applicants</span>
                 <Link to={`/jobs/${j._id}`} className="arrow"><ArrowUpRight /></Link>
+
+                <button
+                  type="button"
+                  className="icon-btn delete-btn"
+                  onClick={() => deleteJob(j)}
+                  disabled={deletingId === j._id}
+                  title="Delete this job"
+                >
+                  <Trash2 size={16} />
+                </button>
               </div>
             ))}
           </div>
@@ -92,3 +120,4 @@ export default function Dashboard() {
     </main>
   );
 }
+

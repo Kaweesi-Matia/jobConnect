@@ -5,7 +5,8 @@ import {
   getJob,
   createJob,
   myJobs,
-  updateJob
+  updateJob,
+  deleteJob
 } from '../controllers/jobs.js';
 
 import {
@@ -50,6 +51,14 @@ router.patch(
   protect,
   allow('recruiter'),
   updateJob
+);
+
+// Delete job
+router.delete(
+  '/:id',
+  protect,
+  allow('recruiter'),
+  deleteJob
 );
 
 export default router;

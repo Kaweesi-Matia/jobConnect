@@ -1,4 +1,5 @@
 import Job from '../models/Job.js';
+import Application from '../models/Application.js';
 
 
 // GET /api/jobs
@@ -315,6 +316,45 @@ export const updateJob = async (req, res) => {
     res.status(400).json({
       success: false,
       message: 'Failed to update job',
+      error: error.message
+    });
+  }
+};
+
+
+// DELETE /api/jobs/:id
+// Recruiter only
+export const deleteJob = async (req, res) => {
+  try {
+    const job = await Job.findOneAndDelete({
+      _id: req.params.id,
+      recruiter: req.user._id
+    });
+
+    if (!job) {
+      return res.status(404).json({
+        success: false,
+        message: 'Job not found'
+      });
+    }
+
+    // Remove any applications tied to this job so they don't
+    // end up orphaned / referencing a deleted job.
+    await Application.deleteMany({
+      job: job._id
+    });
+
+    res.json({
+      success: true,
+      message: 'Job deleted successfully'
+    });
+
+  } catch (error) {
+    console.error('Delete job error:', error);
+
+    res.status(500).json({
+      success: false,
+      message: 'Failed to delete job',
       error: error.message
     });
   }
