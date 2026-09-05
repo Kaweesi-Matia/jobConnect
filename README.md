@@ -1,6 +1,10 @@
 # JobConnect — Modern MERN Job Portal
 
-A portfolio-grade full-stack job marketplace built with MongoDB, Express, React and Node.js.
+[![JobConnect live app](docs/jobconnect.png)](https://job-connect-eta-seven.vercel.app)
+
+**Live app:** [https://job-connect-eta-seven.vercel.app](https://job-connect-eta-seven.vercel.app)
+
+JobConnect is a full-stack job marketplace where candidates search and apply for roles, and recruiters post jobs and manage applicants. It uses MongoDB, Express, React and Node.js, with JWT login, CV uploads, saved jobs and a recruiter pipeline.
 
 ## Highlights
 - Candidate and recruiter accounts with JWT authentication
@@ -18,4 +22,4 @@ A portfolio-grade full-stack job marketplace built with MongoDB, Express, React 
 3. `npm run dev`
 4. In another terminal: `cd client && npm install && npm run dev`
 
-Client: http://localhost:5173  |  API: http://localhost:5000/api
+Client: http://localhost:5173 | API: http://localhost:5000/api
